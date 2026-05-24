@@ -137,8 +137,8 @@ workflow:
 s3:
   endpoint: ${OSS_ENDPOINT:http://localhost:9000}
   remoteEndpoint: ${OSS_REMOTE_ENDPOINT:http://localhost:9000}
-  accessKey: ${OSS_ACCESS_KEY_ID:admin}
-  secretKey: ${OSS_ACCESS_KEY_SECRET:password}
+  accessKey: ${OSS_ACCESS_KEY_ID:minioadmin}
+  secretKey: ${OSS_ACCESS_KEY_SECRET:minioadmin}
   bucket: ${OSS_BUCKET_CONSOLE:aitools}
   presignExpirySeconds: ${OSS_PRESIGN_EXPIRY_SECONDS_CONSOLE:600}
   enablePublicRead: true

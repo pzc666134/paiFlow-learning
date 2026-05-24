@@ -10,7 +10,7 @@ import com.iflytek.astron.workflow.engine.domain.NodeState;
 import com.iflytek.astron.workflow.engine.domain.callbacks.GenerateUsage;
 import com.iflytek.astron.workflow.engine.domain.chain.Node;
 import com.iflytek.astron.workflow.engine.domain.chain.OutputItem;
-import com.iflytek.astron.workflow.engine.integration.model.LlmChatHistory;
+import com.iflytek.astron.workflow.engine.integration.model.history.LlmChatHistory;
 import com.iflytek.astron.workflow.engine.integration.model.ModelServiceClient;
 import com.iflytek.astron.workflow.engine.integration.model.bo.LlmReqBo;
 import com.iflytek.astron.workflow.engine.integration.model.bo.LlmResVo;

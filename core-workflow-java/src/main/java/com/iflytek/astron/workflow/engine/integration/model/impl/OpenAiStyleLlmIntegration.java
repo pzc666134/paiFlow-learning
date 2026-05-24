@@ -1,6 +1,9 @@
-package com.iflytek.astron.workflow.engine.integration.model;
+package com.iflytek.astron.workflow.engine.integration.model.impl;
 
 import com.iflytek.astron.workflow.engine.constants.MsgTypeEnum;
+import com.iflytek.astron.workflow.engine.integration.model.history.LlmChatHistory;
+import com.iflytek.astron.workflow.engine.integration.model.ModelIntegration;
+import com.iflytek.astron.workflow.engine.integration.model.ModelTypeEnum;
 import com.iflytek.astron.workflow.engine.integration.model.bo.LlmCallback;
 import com.iflytek.astron.workflow.engine.integration.model.bo.LlmReqBo;
 import com.iflytek.astron.workflow.engine.integration.model.bo.LlmResVo;
@@ -41,7 +44,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Component
-public class OpenAiStyleLlmIntegration {
+public class OpenAiStyleLlmIntegration implements ModelIntegration {
     // 使用正则表达式分别提取域名和路径部分
     final static Pattern PATTERN = Pattern.compile("^(https?://[^/]+)(/.*)?$");
 
@@ -53,7 +56,7 @@ public class OpenAiStyleLlmIntegration {
 
         if (matcher.matches()) {
             baseUrl = matcher.group(1);  // 域名部分
-            basePath = matcher.group(2);           // 路径部分（可能为null）
+            basePath = matcher.group(2); // 路径部分（可能为null）
         } else {
             // 如果不匹配，默认使用原baseUrl
             baseUrl = apiUrl;
@@ -114,6 +117,11 @@ public class OpenAiStyleLlmIntegration {
             log.error("Error calling OpenAI API", e);
             throw new RuntimeException("Failed to call OpenAI API", e);
         }
+    }
+
+    @Override
+    public ModelTypeEnum getModelType() {
+        return ModelTypeEnum.OPENAI;
     }
 
     private Prompt buildPrompt(LlmReqBo req) {

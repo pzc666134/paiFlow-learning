@@ -1,6 +1,6 @@
 package com.iflytek.astron.workflow.engine.integration.model.bo;
 
-import com.iflytek.astron.workflow.engine.integration.model.LlmChatHistory;
+import com.iflytek.astron.workflow.engine.integration.model.history.LlmChatHistory;
 import lombok.Data;
 
 import java.util.List;
