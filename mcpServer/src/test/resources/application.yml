@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mcp-server
+
+spark:
+  app-id: test-app-id
+  api-key: test-api-key
+  api-secret: test-api-secret
+  tts-url: https://tts-api.xfyun.cn/v2/tts
+
+qwen:
+  api-key: test-qwen-api-key
+  model: qwen-tts-latest
