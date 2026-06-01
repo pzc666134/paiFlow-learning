@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mcp-server
+  main:
+    web-application-type: servlet
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: astron-tts-mcp-server
+        version: 1.0.0
+        type: sync
+        protocol: sse
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/message
+        keep-alive-interval: 30s
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+        tool-callback-converter: true
+        annotation-scanner:
+          enabled: false
+
+spark:
+  app-id: ${SPARK_APP_ID:}
+  api-key: ${SPARK_API_KEY:}
+  api-secret: ${SPARK_API_SECRET:}
+  tts-url: ${SPARK_TTS_URL:https://tts-api.xfyun.cn/v2/tts}
+
+qwen:
+  api-key: ${QWEN_API_KEY:}
+  model: ${QWEN_MODEL:qwen-tts-latest}
