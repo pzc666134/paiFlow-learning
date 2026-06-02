@@ -1,7 +1,7 @@
 package com.iflytek.astron.workflow.engine;
-import com.iflytek.astron.workflow.engine.integration.model.ModelFactory;
-import com.iflytek.astron.workflow.engine.integration.model.ModelIntegration;
-import com.iflytek.astron.workflow.engine.integration.model.ModelTypeEnum;
+import com.iflytek.astron.workflow.engine.integration.model.llm.ModelFactory;
+import com.iflytek.astron.workflow.engine.integration.model.llm.ModelIntegration;
+import com.iflytek.astron.workflow.engine.constants.ModelTypeEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

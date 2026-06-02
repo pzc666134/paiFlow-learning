@@ -1,8 +1,8 @@
-package com.iflytek.astron.workflow.engine.integration.model;
+package com.iflytek.astron.workflow.engine.integration.model.llm;
 
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmCallback;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmReqBo;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmResVo;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmCallback;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmReqBo;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmResVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

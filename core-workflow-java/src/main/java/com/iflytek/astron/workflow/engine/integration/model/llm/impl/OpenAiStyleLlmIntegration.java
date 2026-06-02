@@ -1,12 +1,12 @@
-package com.iflytek.astron.workflow.engine.integration.model.impl;
+package com.iflytek.astron.workflow.engine.integration.model.llm.impl;
 
 import com.iflytek.astron.workflow.engine.constants.MsgTypeEnum;
-import com.iflytek.astron.workflow.engine.integration.model.history.LlmChatHistory;
-import com.iflytek.astron.workflow.engine.integration.model.ModelIntegration;
-import com.iflytek.astron.workflow.engine.integration.model.ModelTypeEnum;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmCallback;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmReqBo;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmResVo;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmCallback;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmReqBo;
+import com.iflytek.astron.workflow.engine.integration.model.llm.history.LlmChatHistory;
+import com.iflytek.astron.workflow.engine.integration.model.llm.ModelIntegration;
+import com.iflytek.astron.workflow.engine.constants.ModelTypeEnum;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmResVo;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 @Component
 public class OpenAiStyleLlmIntegration implements ModelIntegration {
     // 使用正则表达式分别提取域名和路径部分
+
     final static Pattern PATTERN = Pattern.compile("^(https?://[^/]+)(/.*)?$");
 
     private OpenAiApi initClient(String key, String apiUrl) {
@@ -158,7 +159,10 @@ public class OpenAiStyleLlmIntegration implements ModelIntegration {
         // 支持深度思考
         optionBuilder.extraBody(Map.of("enable_thinking", true));
 
-        return OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(optionBuilder.build()).build();
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
+                .defaultOptions(optionBuilder.build())
+                .build();
     }
 
     private OpenAiChatOptions buildChatOption(LlmReqBo req) {

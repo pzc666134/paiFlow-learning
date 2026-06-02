@@ -1,5 +1,6 @@
-package com.iflytek.astron.workflow.engine.integration.model;
+package com.iflytek.astron.workflow.engine.integration.model.llm;
 
+import com.iflytek.astron.workflow.engine.constants.ModelTypeEnum;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

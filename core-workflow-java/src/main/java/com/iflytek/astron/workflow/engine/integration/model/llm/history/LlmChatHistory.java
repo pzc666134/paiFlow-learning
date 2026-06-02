@@ -1,4 +1,4 @@
-package com.iflytek.astron.workflow.engine.integration.model.history;
+package com.iflytek.astron.workflow.engine.integration.model.llm.history;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: core-workflow-java
+
+
   
   # 数据库配置
   datasource:
@@ -50,6 +52,7 @@ spring:
           max-idle: 10
           min-idle: 5
           max-wait: 3000ms
+
   ai:
     # 引用openai时，要求必须设置api-key；我们实际上从流程编排中获取对应的apiKey
     openai:
@@ -57,6 +60,20 @@ spring:
       audio:
         speech:
           api-key: "test"
+    #mcp配置
+    mcp:
+      client:
+        enabled: true
+        name: core-workflow-mcp-client
+        type: SYNC
+        request-timeout: 60s
+        toolcallback:
+          enabled: true
+        sse:
+          connections:
+            astron-tts-mcp-server:
+              url: http://localhost:8080
+              sse-endpoint: /sse
 
   # JSON 配置
   jackson:

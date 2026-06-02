@@ -1,4 +1,4 @@
-package com.iflytek.astron.workflow.engine.integration.model.bo;
+package com.iflytek.astron.workflow.engine.integration.model.llm.bo;
 
 import org.springframework.ai.chat.metadata.Usage;
 

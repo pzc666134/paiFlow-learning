@@ -1,8 +1,9 @@
-package com.iflytek.astron.workflow.engine.integration.model;
+package com.iflytek.astron.workflow.engine.integration.model.llm;
 
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmCallback;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmReqBo;
-import com.iflytek.astron.workflow.engine.integration.model.bo.LlmResVo;
+import com.iflytek.astron.workflow.engine.constants.ModelTypeEnum;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmCallback;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmReqBo;
+import com.iflytek.astron.workflow.engine.integration.model.llm.bo.LlmResVo;
 
 /**
  * LLM模型集成接口

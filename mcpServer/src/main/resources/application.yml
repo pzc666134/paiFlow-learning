@@ -10,19 +10,20 @@ spring:
     mcp:
       server:
         enabled: true
+        stdio: false
         name: astron-tts-mcp-server
         version: 1.0.0
-        type: sync
-        protocol: sse
+        type: SYNC
+        protocol: SSE
         sse-endpoint: /sse
-        sse-message-endpoint: /mcp/message
+        s ssse-message-endpoint: /mcp/message
         keep-alive-interval: 30s
+        request-timeout: 60s
         capabilities:
           tool: true
           resource: false
           prompt: false
           completion: false
-        tool-callback-converter: true
         annotation-scanner:
           enabled: false
 

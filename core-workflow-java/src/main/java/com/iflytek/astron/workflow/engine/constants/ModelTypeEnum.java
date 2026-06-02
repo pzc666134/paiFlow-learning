@@ -1,4 +1,4 @@
-package com.iflytek.astron.workflow.engine.integration.model;
+package com.iflytek.astron.workflow.engine.constants;
 
 import lombok.Getter;
 
