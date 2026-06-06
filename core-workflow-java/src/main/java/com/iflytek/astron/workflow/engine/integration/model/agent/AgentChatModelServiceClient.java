@@ -44,7 +44,7 @@ public class AgentChatModelServiceClient {
             return modelType;
         }
 
-        modelType = parseModelType(getParam(nodeParam, "provider"));
+        modelType = parseModelType(getParam(nodeParam, "domain"));
         if (modelType != null) {
             return modelType;
         }

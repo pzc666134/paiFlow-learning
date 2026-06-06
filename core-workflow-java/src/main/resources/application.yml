@@ -4,6 +4,10 @@ server:
     context-path: /
 
 spring:
+  elasticsearch:
+    uris: http://localhost:9200
+
+
   application:
     name: core-workflow-java
 
@@ -23,7 +27,7 @@ spring:
       max-lifetime: 580000
       connection-test-query: SELECT 1
       validation-timeout: 5000
-  
+
   # Link数据库配置
   link-datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -60,6 +64,9 @@ spring:
       audio:
         speech:
           api-key: "test"
+      embedding:
+        options:
+          model: text-embedding-3-small
     #mcp配置
     mcp:
       client:
@@ -74,6 +81,13 @@ spring:
             astron-tts-mcp-server:
               url: http://localhost:8080
               sse-endpoint: /sse
+
+    vectorstore:
+      elasticsearch:
+        initialize-schema: true
+        index-name: astron-vectorstore
+        dimensions: 1536
+        similarity: cosine
 
   # JSON 配置
   jackson:
@@ -127,8 +141,6 @@ logging:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
   file:
     name: /app/logs/workflow-java.log
-    max-size: 100MB
-    max-history: 30
 
 # 工作流配置
 workflow:

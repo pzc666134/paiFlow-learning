@@ -1,0 +1,119 @@
+{
+  "groups": [
+    {
+      "name": "spring.link-datasource",
+      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
+      "description": "Link datasource connection properties."
+    },
+    {
+      "name": "spring.link-datasource.hikari",
+      "type": "com.zaxxer.hikari.HikariDataSource",
+      "description": "Link datasource HikariCP pool properties."
+    },
+    {
+      "name": "workflow",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "PaiFlow workflow engine custom configuration."
+    },
+    {
+      "name": "workflow.engine",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Workflow engine execution configuration."
+    },
+    {
+      "name": "workflow.services",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "External service endpoints used by workflow execution."
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.link-datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "Fully qualified name of the JDBC driver for the Link datasource."
+    },
+    {
+      "name": "spring.link-datasource.url",
+      "type": "java.lang.String",
+      "description": "JDBC URL of the Link datasource."
+    },
+    {
+      "name": "spring.link-datasource.username",
+      "type": "java.lang.String",
+      "description": "Login username of the Link datasource."
+    },
+    {
+      "name": "spring.link-datasource.password",
+      "type": "java.lang.String",
+      "description": "Login password of the Link datasource."
+    },
+    {
+      "name": "spring.link-datasource.hikari.maximum-pool-size",
+      "type": "java.lang.Integer",
+      "description": "Maximum size of the Link datasource HikariCP pool."
+    },
+    {
+      "name": "spring.link-datasource.hikari.minimum-idle",
+      "type": "java.lang.Integer",
+      "description": "Minimum number of idle connections maintained by the Link datasource HikariCP pool."
+    },
+    {
+      "name": "spring.link-datasource.hikari.connection-timeout",
+      "type": "java.lang.Long",
+      "description": "Maximum number of milliseconds that a client will wait for a Link datasource connection."
+    },
+    {
+      "name": "spring.link-datasource.hikari.idle-timeout",
+      "type": "java.lang.Long",
+      "description": "Maximum amount of time in milliseconds that a Link datasource connection is allowed to sit idle."
+    },
+    {
+      "name": "spring.link-datasource.hikari.max-lifetime",
+      "type": "java.lang.Long",
+      "description": "Maximum lifetime in milliseconds of a Link datasource connection in the pool."
+    },
+    {
+      "name": "spring.link-datasource.hikari.connection-test-query",
+      "type": "java.lang.String",
+      "description": "SQL query used to test Link datasource connections."
+    },
+    {
+      "name": "spring.link-datasource.hikari.validation-timeout",
+      "type": "java.lang.Long",
+      "description": "Maximum amount of time in milliseconds that Link datasource connection validation can take."
+    },
+    {
+      "name": "workflow.version",
+      "type": "java.lang.String",
+      "description": "Workflow engine implementation version.",
+      "defaultValue": "java"
+    },
+    {
+      "name": "workflow.engine.node-timeout",
+      "type": "java.lang.Integer",
+      "description": "Node execution timeout in seconds.",
+      "defaultValue": 300
+    },
+    {
+      "name": "workflow.engine.workflow-timeout",
+      "type": "java.lang.Integer",
+      "description": "Workflow execution timeout in seconds.",
+      "defaultValue": 600
+    },
+    {
+      "name": "workflow.services.model-service-url",
+      "type": "java.lang.String",
+      "description": "Model service base URL."
+    },
+    {
+      "name": "workflow.services.aitools-url",
+      "type": "java.lang.String",
+      "description": "AI tools or Link service base URL."
+    },
+    {
+      "name": "workflow.services.python-workflow-url",
+      "type": "java.lang.String",
+      "description": "Python workflow service base URL used for comparison or compatibility."
+    }
+  ]
+}

@@ -16,7 +16,7 @@ spring:
         type: SYNC
         protocol: SSE
         sse-endpoint: /sse
-        s ssse-message-endpoint: /mcp/message
+        sse-message-endpoint: /mcp/message
         keep-alive-interval: 30s
         request-timeout: 60s
         capabilities:
@@ -25,7 +25,7 @@ spring:
           prompt: false
           completion: false
         annotation-scanner:
-          enabled: false
+          enabled: true
 
 spark:
   app-id: ${SPARK_APP_ID:}
