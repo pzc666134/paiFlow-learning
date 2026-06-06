@@ -1,6 +1,7 @@
 package com.iflytek.astron.link.tools.config;
 
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,8 +25,12 @@ public class LinkDataSourceConfig {
     }
 
     @Bean
-    public DataSource linkDataSource(DataSourceProperties linkDataSourceProperties) {
-        return linkDataSourceProperties.initializeDataSourceBuilder().build();
+    @ConfigurationProperties(prefix = "spring.link-datasource.hikari")
+    public DataSource linkDataSource(
+            @Qualifier("linkDataSourceProperties") DataSourceProperties linkDataSourceProperties) {
+        return linkDataSourceProperties.initializeDataSourceBuilder()
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Bean
