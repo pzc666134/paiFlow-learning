@@ -10,6 +10,9 @@ import com.iflytek.astron.workflow.engine.node.StreamCallback;
 import com.iflytek.astron.workflow.engine.node.callback.SseStreamCallback;
 import com.iflytek.astron.workflow.engine.util.AsyncUtil;
 import com.iflytek.astron.workflow.flow.service.WorkflowService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -31,6 +34,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 @Slf4j
+@Tag(name = "Workflow Debug", description = "Workflow and node debug APIs")
 @RestController
 @RequestMapping({"/workflow/v1"})
 public class WorkflowDebugController {
@@ -59,6 +63,7 @@ public class WorkflowDebugController {
      * - workflow_complete: Workflow finished
      * - error: Error occurred
      */
+    @Operation(summary = "Debug workflow chat completions", description = "Run a workflow in debug mode and stream execution events over SSE.")
     @PostMapping(value = {"/debug/chat/completions"}, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter executeWorkflow(@RequestBody WorkflowDebugRequest request) {
         log.info("Workflow execution request: flowId={}, inputs={}", request.getFlowId(), request);
@@ -99,26 +104,32 @@ public class WorkflowDebugController {
      * Workflow execution request
      */
     @Data
+    @Schema(description = "Workflow debug execution request")
     public static class WorkflowDebugRequest {
 
+        @Schema(description = "Workflow ID", example = "7399634992520073218", requiredMode = Schema.RequiredMode.REQUIRED)
         @com.fasterxml.jackson.annotation.JsonProperty("flow_id")
         private String flowId;
 
         /**
          * 是否流式返回
          */
+        @Schema(description = "Whether to stream response events", example = "true")
         @com.fasterxml.jackson.annotation.JsonProperty("stream")
         private Boolean stream;
 
+        @Schema(description = "Whether debug mode is enabled", example = "true")
         @com.fasterxml.jackson.annotation.JsonProperty("debug")
         private Boolean debug;
 
+        @Schema(description = "User ID", example = "admin")
         @com.fasterxml.jackson.annotation.JsonProperty("uid")
         private String uuid;
 
         /**
          * 输入参数
          */
+        @Schema(description = "Workflow input parameters", example = "{\"AGENT_USER_INPUT\":\"给我说一个三国的笑话吧\"}")
         @com.fasterxml.jackson.annotation.JsonProperty("parameters")
         private Map<String, Object> parameters;
 
@@ -133,6 +144,7 @@ public class WorkflowDebugController {
      * <p>
      * Response: JSON response with debug execution result
      */
+    @Operation(summary = "Debug a single node", description = "Execute a single node from workflow DSL and return the node debug result.")
     @PostMapping(value = {"/node/debug"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public RspVo<NodeDebugRespVo> nodeDebug(@RequestBody NodeDebugRequest request) {
         log.info("Node debug request: id={}", request.id());
@@ -148,6 +160,16 @@ public class WorkflowDebugController {
     }
 
 
-    public record NodeDebugRequest(String id, String name, String description, WorkflowDSL data) {
+    @Schema(description = "Single node debug request")
+    public record NodeDebugRequest(
+            @Schema(description = "Node ID to debug", example = "node-001")
+            String id,
+            @Schema(description = "Workflow or node name", example = "Test Workflow")
+            String name,
+            @Schema(description = "Debug description", example = "Test Description")
+            String description,
+            @Schema(description = "Workflow DSL containing the node to execute")
+            WorkflowDSL data
+    ) {
     }
 }

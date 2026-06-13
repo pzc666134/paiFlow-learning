@@ -7,6 +7,9 @@ import com.iflytek.astron.workflow.engine.domain.WorkflowDSL;
 import com.iflytek.astron.workflow.engine.node.StreamCallback;
 import com.iflytek.astron.workflow.engine.node.callback.SseStreamCallback;
 import com.iflytek.astron.workflow.flow.service.WorkflowService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,6 +26,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 @Slf4j
+@Tag(name = "Workflow Runtime", description = "Workflow execution APIs")
 @RestController
 @RequestMapping("/api/workflow")
 public class WorkflowController {
@@ -54,6 +58,7 @@ public class WorkflowController {
      * - workflow_complete: Workflow finished
      * - error: Error occurred
      */
+    @Operation(summary = "Execute workflow with SSE", description = "Run a workflow and stream node execution events over Server-Sent Events.")
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter executeWorkflow(@RequestBody WorkflowRequest request) {
         log.info("Workflow execution request: flowId={}, inputs={}", request.getFlowId(), request.getInputs());
@@ -94,17 +99,22 @@ public class WorkflowController {
      * Workflow execution request
      */
     @Data
+    @Schema(description = "Workflow execution request")
     public static class WorkflowRequest {
 
+        @Schema(description = "Workflow ID", example = "184736", requiredMode = Schema.RequiredMode.REQUIRED)
         @com.fasterxml.jackson.annotation.JsonProperty("flow_id")
         private String flowId;
 
+        @Schema(description = "Workflow input variables", example = "{\"user_input\":\"介绍一下 Java\"}")
         @com.fasterxml.jackson.annotation.JsonProperty("inputs")
         private Map<String, Object> inputs;
 
+        @Schema(description = "Conversation ID used by memory-enabled nodes", example = "chat-001")
         @com.fasterxml.jackson.annotation.JsonProperty("chatId")
         private String chatId;
 
+        @Schema(description = "Whether this request is a regeneration", example = "false")
         @com.fasterxml.jackson.annotation.JsonProperty("regen")
         private Boolean regen;
     }

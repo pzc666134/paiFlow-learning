@@ -1,5 +1,6 @@
 package com.iflytek.astron.workflow.controller.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.UUID;
@@ -8,10 +9,15 @@ import java.util.UUID;
  * Unified response entity
  */
 @Data
+@Schema(description = "Unified API response")
 public class RspVo<T> {
+    @Schema(description = "Response code. 0 means success.", example = "0")
     private int code;
+    @Schema(description = "Response message", example = "success")
     private String message;
+    @Schema(description = "Response payload")
     private T data;
+    @Schema(description = "Request/session trace ID", example = "a1b2c3d4e5f6g7h8")
     private String sid;
 
     public RspVo() {}

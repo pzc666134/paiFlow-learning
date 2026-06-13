@@ -9,6 +9,9 @@ import com.iflytek.astron.workflow.engine.domain.WorkflowDSL;
 import com.iflytek.astron.workflow.engine.node.StreamCallback;
 import com.iflytek.astron.workflow.engine.node.callback.SseStreamCallback;
 import com.iflytek.astron.workflow.flow.service.WorkflowService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -29,6 +32,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 @Slf4j
+@Tag(name = "Workflow Frontend", description = "Frontend-compatible workflow execution APIs")
 @RestController
 @RequestMapping("/api/v1/workflow")
 public class WorkflowFrontendController {
@@ -53,6 +57,7 @@ public class WorkflowFrontendController {
      * "userId": "user-id"
      * }
      */
+    @Operation(summary = "Frontend workflow chat stream", description = "Run a workflow using the frontend-compatible request format and stream execution events over SSE.")
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter workflowChatStream(@RequestBody FrontendWorkflowRequest request) {
         log.info("Frontend workflow chat stream request: flowId={}, userId={}, chatId={}",
@@ -114,20 +119,26 @@ public class WorkflowFrontendController {
      * Frontend workflow request (compatible with console-hub format)
      */
     @Data
+    @Schema(description = "Frontend-compatible workflow execution request")
     public static class FrontendWorkflowRequest {
 
+        @Schema(description = "Workflow ID", example = "184736", requiredMode = Schema.RequiredMode.REQUIRED)
         @JsonProperty("flow_id")
         private String flowId;
 
+        @Schema(description = "Workflow input parameters", example = "{\"AGENT_USER_INPUT\":\"给我说一个三国的笑话吧\"}")
         @JsonProperty("parameters")
         private Map<String, Object> inputs;
 
+        @Schema(description = "Conversation ID", example = "chat-001")
         @JsonProperty("chatId")
         private String chatId;
 
+        @Schema(description = "User ID", example = "admin")
         @JsonProperty("uid")
         private String userId;
 
+        @Schema(description = "Whether this request is a regeneration", example = "false")
         @JsonProperty("regen")
         private Boolean regen;
     }

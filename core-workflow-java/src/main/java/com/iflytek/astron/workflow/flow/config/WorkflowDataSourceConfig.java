@@ -36,11 +36,13 @@ public class WorkflowDataSourceConfig {
     }
 
     @Bean
+    @Primary
     public DataSourceTransactionManager workflowTransactionManager(@Qualifier("workflowDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean
+    @Primary
     public SqlSessionFactory workflowSqlSessionFactory(@Qualifier("workflowDataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
         bean.setDataSource(dataSource);

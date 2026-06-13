@@ -93,11 +93,14 @@ public class AiAgentNodeExecutor extends AbstractNodeExecutor {
         Node node = nodeState.node();
         Map<String, Object> nodeParam = node.getData().getNodeParam();
 
+        //渲染用户提示词
         String userPrompt = getPrompt(nodeParam, inputs);
         int maxIterations = getInt(nodeParam, "maxIterations", DEFAULT_MAX_ITERATIONS);
         boolean enableValidation = getBoolean(nodeParam, "enableValidation", true);
         boolean enableRag = agentRagAdvisorService.isRagEnabled(nodeParam);
         boolean ragValidationEnabled = agentRagAdvisorService.isRagValidationEnabled(nodeParam);
+
+        //获取工具摘要
         List<ToolCallback> availableToolCallbacks = collectAvailableToolCallbacks(nodeParam);
         String systemPrompt = buildSystemPrompt(nodeParam, inputs, maxIterations, enableValidation,
                 enableRag, ragValidationEnabled, availableToolCallbacks);
@@ -107,7 +110,7 @@ public class AiAgentNodeExecutor extends AbstractNodeExecutor {
         ChatClient chatClient = buildChatClient(chatModel, ragAdvisor, availableToolCallbacks);
         String conversationId = buildConversationId(node);
 
-        log.info("AI agent node: nodeId={}, model={}, promptLength={}, maxIterations={}, enableValidation={}, enableRag={}, ragAdvisorEnabled={}",
+        log.info("AI agent node: nodeId ={}, model={}, promptLength={}, maxIterations={}, enableValidation={}, enableRag={}, ragAdvisorEnabled={}",
                 node.getId(), getParam(nodeParam, "domain"), userPrompt.length(), maxIterations, enableValidation,
                 enableRag, ragAdvisor != null);
 
@@ -152,7 +155,6 @@ public class AiAgentNodeExecutor extends AbstractNodeExecutor {
             advisors.add(ragAdvisor);
         }
         builder.defaultAdvisors(advisors);
-
 
         if (!availableToolCallbacks.isEmpty()) {
             builder.defaultToolCallbacks(availableToolCallbacks);

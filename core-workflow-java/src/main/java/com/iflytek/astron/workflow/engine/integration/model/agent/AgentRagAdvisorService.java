@@ -11,10 +11,11 @@ import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQuery
 import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,14 +62,12 @@ public class AgentRagAdvisorService {
         }
 
         DocumentRetriever documentRetriever = resolveDocumentRetriever(nodeParam);
-        boolean ragValidationEnabled = getBoolean(nodeParam, "ragValidationEnabled",
-                getBoolean(nodeParam, "enableValidation", true));
         boolean allowEmptyContext = getBoolean(nodeParam, "allowEmptyRagContext", true);
 
 
         ContextualQueryAugmenter queryAugmenter = ContextualQueryAugmenter.builder()
-                .promptTemplate(new PromptTemplate(buildRagPrompt(ragValidationEnabled)))
-                .emptyContextPromptTemplate(new PromptTemplate(buildEmptyContextPrompt(ragValidationEnabled)))
+                .promptTemplate(new PromptTemplate(buildRagPrompt()))
+                .emptyContextPromptTemplate(new PromptTemplate(buildEmptyContextPrompt()))
                 .allowEmptyContext(allowEmptyContext)
                 .build();
 
@@ -85,7 +84,7 @@ public class AgentRagAdvisorService {
 
 
     public boolean isRagEnabled(Map<String, Object> nodeParam) {
-        return getBoolean(nodeParam, "enableRag", false);
+        return getBoolean(nodeParam, "enableValidation", true);
     }
 
     public int getRagTopK(Map<String, Object> nodeParam) {
@@ -96,10 +95,13 @@ public class AgentRagAdvisorService {
         return getBoolean(nodeParam, "ragValidationEnabled", getBoolean(nodeParam, "enableValidation", true));
     }
 
-    private DocumentRetriever resolveDocumentRetriever(Map<String, Object> nodeParam) {
-        Optional<DocumentRetriever> documentRetriever = documentRetrieverProvider.orderedStream().findFirst();
-        if (documentRetriever.isPresent()) {
-            return documentRetriever.get();
+    DocumentRetriever resolveDocumentRetriever(Map<String, Object> nodeParam) {
+        Filter.Expression metadataFilterExpression = buildMetadataFilterExpression(nodeParam);
+        if (metadataFilterExpression == null) {
+            Optional<DocumentRetriever> documentRetriever = documentRetrieverProvider.orderedStream().findFirst();
+            if (documentRetriever.isPresent()) {
+                return documentRetriever.get();
+            }
         }
 
         VectorStore vectorStore = vectorStoreProvider.orderedStream()
@@ -116,9 +118,46 @@ public class AgentRagAdvisorService {
             builder.similarityThreshold(similarityThreshold);
         }
 
-        // TODO: Add knowledgeBaseId / datasetId / collectionName filter expressions
-        // when the project defines a stable metadata schema for vector documents.
+        if (metadataFilterExpression != null) {
+            builder.filterExpression(metadataFilterExpression);
+        }
         return builder.build();
+    }
+
+    Filter.Expression buildMetadataFilterExpression(Map<String, Object> nodeParam) {
+        String knowledgeBaseId = getParam(nodeParam, "knowledgeBaseId", null);
+        String datasetId = getParam(nodeParam, "datasetId", null);
+        List<Object> documentIds = getObjectList(nodeParam.get("documentIds"));
+        String documentId = getParam(nodeParam, "documentId", null);
+        if (StringUtils.isNotBlank(documentId) && !documentIds.contains(documentId)) {
+            documentIds.add(documentId);
+        }
+
+        if (StringUtils.isBlank(knowledgeBaseId) && StringUtils.isBlank(datasetId) && documentIds.isEmpty()) {
+            return null;
+        }
+
+        FilterExpressionBuilder filterBuilder = new FilterExpressionBuilder();
+        List<FilterExpressionBuilder.Op> expressions = new ArrayList<>();
+        if (StringUtils.isNotBlank(knowledgeBaseId)) {
+            expressions.add(filterBuilder.eq("knowledgeBaseId", knowledgeBaseId));
+        }
+        if (StringUtils.isNotBlank(datasetId)) {
+            expressions.add(filterBuilder.eq("datasetId", datasetId));
+        }
+        if (!documentIds.isEmpty()) {
+            if (documentIds.size() == 1) {
+                expressions.add(filterBuilder.eq("documentId", documentIds.get(0)));
+            } else {
+                expressions.add(filterBuilder.in("documentId", documentIds));
+            }
+        }
+
+        FilterExpressionBuilder.Op expression = expressions.get(0);
+        for (int i = 1; i < expressions.size(); i++) {
+            expression = filterBuilder.and(expression, expressions.get(i));
+        }
+        return expression.build();
     }
 
     private QueryTransformer buildQueryTransformers(Map<String, Object> nodeParam) {
@@ -146,48 +185,45 @@ public class AgentRagAdvisorService {
         return ChatClient.builder(rewriteChatModel);
     }
 
-    private String buildRagPrompt(boolean ragValidationEnabled) {
-        if (!ragValidationEnabled) {
-            return """
-                    以下是检索到的上下文，请仅在这些上下文支持的范围内回答用户问题。
-
-                    检索上下文：
-                    {context}
-
-                    用户问题：
-                    {query}
-
-                    请输出最终答案。
-                    """;
-        }
-
+    private String buildRagPrompt() {
         return """
-                以下是检索到的上下文，请仅在这些上下文支持的范围内回答用户问题。
 
-                检索上下文：
-                {context}
+            你是一个基于检索上下文回答问题的助手。
 
-                用户问题：
-                {query}
+            请严格根据【检索上下文】回答【用户问题】，并在回答前进行内部校验：
 
-                请完成以下校验：
-                1. 上下文是否足以回答用户问题。
-                2. 答案中的关键事实是否能被上下文支持。
-                3. 是否存在缺失、冲突或不确定的信息。
-                4. 如果上下文不足，请明确说明不足之处，不要编造。
+            1. 上下文是否足以回答用户问题；
 
-                请输出最终答案。
-                """;
+            2. 答案中的关键事实是否能被上下文支持；
+
+            3. 上下文中是否存在缺失、冲突或不确定信息；
+
+            4. 如果上下文不足，请明确说明“根据当前上下文无法回答该问题”，不要编造。
+
+            注意：
+
+            - 校验过程只在内部完成，不要输出校验步骤。
+
+            - 最终答案必须完全基于检索上下文。
+
+            - 不要使用上下文以外的知识补充事实。
+
+            - 如果只能部分回答，请说明哪些内容可以回答，哪些内容缺少依据。
+
+            【检索上下文】
+
+            {context}
+
+            【用户问题】
+
+            {query}
+
+            请只输出最终答案。
+
+            """;
     }
 
-    private String buildEmptyContextPrompt(boolean ragValidationEnabled) {
-        if (!ragValidationEnabled) {
-            return """
-                    当前没有检索到可用上下文。
-                    请基于用户问题谨慎回答；如果缺少依据，请说明无法确认。
-                    """;
-        }
-
+    private String buildEmptyContextPrompt() {
         return """
                 当前没有检索到可用上下文。
                 请明确说明缺少可支持答案的检索依据，不要编造事实。
@@ -244,6 +280,40 @@ public class AgentRagAdvisorService {
             return defaultValue;
         }
         return String.valueOf(value);
+    }
+
+    private List<Object> getObjectList(Object value) {
+        List<Object> values = new ArrayList<>();
+        if (value == null) {
+            return values;
+        }
+        if (value instanceof Iterable<?> iterable) {
+            for (Object item : iterable) {
+                if (item != null && StringUtils.isNotBlank(String.valueOf(item))) {
+                    values.add(String.valueOf(item));
+                }
+            }
+            return values;
+        }
+        if (value.getClass().isArray()) {
+            Object[] array = (Object[]) value;
+            for (Object item : array) {
+                if (item != null && StringUtils.isNotBlank(String.valueOf(item))) {
+                    values.add(String.valueOf(item));
+                }
+            }
+            return values;
+        }
+        String text = String.valueOf(value);
+        if (StringUtils.isBlank(text)) {
+            return values;
+        }
+        for (String item : text.split(",")) {
+            if (StringUtils.isNotBlank(item)) {
+                values.add(item.trim());
+            }
+        }
+        return values;
     }
 
 }

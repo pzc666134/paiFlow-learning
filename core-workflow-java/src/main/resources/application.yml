@@ -67,6 +67,9 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+          dimensions: 1536
+        api-key:
+        project-id: "paiFlow"
     #mcp配置
     mcp:
       client:
@@ -129,6 +132,20 @@ management:
     db:
       enabled: true
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls-primary-name: all
+    tags-sorter: alpha
+    operations-sorter: alpha
+  packages-to-scan:
+    - com.iflytek.astron.workflow.controller
+    - com.iflytek.astron.link.controller
+
 # 日志配置
 logging:
   level:
@@ -140,7 +157,7 @@ logging:
     console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
   file:
-    name: /app/logs/workflow-java.log
+    name: ${LOG_FILE:./logs/workflow-java.log}
 
 # 工作流配置
 workflow:
@@ -167,7 +184,7 @@ s3:
   endpoint: ${OSS_ENDPOINT:http://localhost:9000}
   remoteEndpoint: ${OSS_REMOTE_ENDPOINT:http://localhost:9000}
   accessKey: ${OSS_ACCESS_KEY_ID:minioadmin}
-  secretKey: ${OSS_ACCESS_KEY_SECRET:minioadmin}
+  secretKey: ${OSS_ACCESS_KEY_SECRET:minioadmin123}
   bucket: ${OSS_BUCKET_CONSOLE:aitools}
   presignExpirySeconds: ${OSS_PRESIGN_EXPIRY_SECONDS_CONSOLE:600}
   enablePublicRead: true

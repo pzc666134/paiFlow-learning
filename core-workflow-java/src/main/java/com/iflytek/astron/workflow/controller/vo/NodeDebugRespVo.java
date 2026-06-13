@@ -2,6 +2,7 @@ package com.iflytek.astron.workflow.controller.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.iflytek.astron.workflow.engine.domain.callbacks.GenerateUsage;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -14,51 +15,60 @@ import lombok.Data;
  * @version 1.0.0
  */
 @Data
+@Schema(description = "Node debug response")
 public class NodeDebugRespVo {
 
     /**
      * Node identifier
      */
+    @Schema(description = "Node ID", example = "node-001")
     @JsonProperty("node_id")
     private String nodeId;
 
     /**
      * Node alias name
      */
+    @Schema(description = "Node alias name", example = "LLM Node")
     @JsonProperty("alias_name")
     private String aliasName;
 
     /**
      * Type of the node
      */
+    @Schema(description = "Node type", example = "agent")
     @JsonProperty("node_type")
     private String nodeType;
 
     /**
      * Input data as JSON string
      */
+    @Schema(description = "Node input data as JSON string")
     private String input;
 
     /**
      * Raw output data as string
      */
+    @Schema(description = "Raw node output")
     @JsonProperty("raw_output")
     private String rawOutput;
 
     /**
      * Processed output data as JSON string
      */
+    @Schema(description = "Processed node output as JSON string")
     private String output;
 
     /**
      * Node execution cost in seconds as string
      */
+    @Schema(description = "Node execution cost in seconds", example = "1.23")
     @JsonProperty("node_exec_cost")
     private String nodeExecCost;
 
     /**
      * Token usage cost information
      */
+    @Schema(description = "Token usage")
     @JsonProperty("token_cost")
     private GenerateUsage tokenCost;
 

@@ -11,6 +11,10 @@ import com.iflytek.astron.workflow.engine.util.FlowUtil;
 import com.iflytek.astron.workflow.exception.ErrorCode;
 import com.iflytek.astron.workflow.flow.entity.WorkflowEntity;
 import com.iflytek.astron.workflow.flow.service.WorkflowService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -31,6 +35,7 @@ import java.util.Map;
  * @date 2025/12/10
  */
 @Slf4j
+@Tag(name = "Workflow Protocol", description = "Workflow protocol management APIs")
 @RestController
 @RequestMapping("/workflow/v1/protocol")
 public class ProtocolController {
@@ -47,6 +52,7 @@ public class ProtocolController {
      * @param request Workflow add request
      * @return Response with flow_id
      */
+    @Operation(summary = "Create workflow", description = "Create a workflow from protocol data and validate workflow DSL when data is provided.")
     @PostMapping("/add")
     public RspVo addWorkflow(@RequestBody WorkflowAddRequest request) {
         try {
@@ -82,6 +88,7 @@ public class ProtocolController {
      * @param request Flow read request
      * @return Flow data response
      */
+    @Operation(summary = "Get workflow", description = "Get stored workflow metadata and DSL by workflow ID.")
     @PostMapping("/get")
     public RspVo getWorkflow(@RequestBody WorkflowReadRequest request) {
         try {
@@ -101,8 +108,10 @@ public class ProtocolController {
      * @param request Flow update data
      * @return Success response
      */
+    @Operation(summary = "Update workflow", description = "Update a workflow and validate workflow DSL when data is provided.")
     @PostMapping("/update/{flowId}")
-    public RspVo updateWorkflow(@PathVariable String flowId, @RequestBody WorkflowUpdateRequest request) {
+    public RspVo updateWorkflow(@Parameter(description = "Workflow ID", example = "184736") @PathVariable String flowId,
+                                @RequestBody WorkflowUpdateRequest request) {
         try {
             log.info("Updating workflow: {}", flowId);
 
@@ -133,6 +142,7 @@ public class ProtocolController {
      * @param request Flow read request
      * @return Success response
      */
+    @Operation(summary = "Delete workflow", description = "Delete a workflow by workflow ID.")
     @PostMapping("/delete")
     public RspVo deleteWorkflow(@RequestBody WorkflowReadRequest request) {
         try {
@@ -151,8 +161,9 @@ public class ProtocolController {
      * @param flowId Flow ID to build
      * @return Streaming response with build progress
      */
+    @Operation(summary = "Build workflow", description = "Build a workflow and stream build progress over SSE.")
     @PostMapping(value = "/build/{flowId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter buildWorkflow(@PathVariable String flowId) {
+    public SseEmitter buildWorkflow(@Parameter(description = "Workflow ID", example = "184736") @PathVariable String flowId) {
         SseEmitter emitter = new SseEmitter(600_000L);
 
         AsyncUtil.execute(() -> {
@@ -181,8 +192,11 @@ public class ProtocolController {
      * @param flowId Flow ID to get info for
      * @return MCP input schema response
      */
+    @Operation(summary = "Get workflow MCP input schema", description = "Generate MCP input schema information for a workflow.")
     @GetMapping("/get_flow_info/{flowId}")
-    public RspVo getFlowInfo(@RequestHeader("X-Consumer-Username") String consumerUsername,
+    public RspVo getFlowInfo(@Parameter(description = "Consumer username", example = "admin")
+                             @RequestHeader("X-Consumer-Username") String consumerUsername,
+                             @Parameter(description = "Workflow ID", example = "184736")
                              @PathVariable String flowId) {
         try {
             Map<String, Object> mcpInputSchema = workflowService.generateMcpInputSchema(flowId, consumerUsername);
@@ -200,6 +214,7 @@ public class ProtocolController {
      * @param request Comparison data to save
      * @return Success response
      */
+    @Operation(summary = "Save workflow comparison", description = "Save workflow comparison data for a specific version.")
     @PostMapping("/compare/save")
     public RspVo saveComparisons(@RequestBody SaveComparisonRequest request) {
         try {
@@ -218,6 +233,7 @@ public class ProtocolController {
      * @param request Comparison deletion request data
      * @return Success response
      */
+    @Operation(summary = "Delete workflow comparison", description = "Delete workflow comparison data for a specific version.")
     @DeleteMapping("/compare/delete")
     public RspVo deleteComparisons(@RequestBody DeleteComparisonRequest request) {
         try {
@@ -235,8 +251,11 @@ public class ProtocolController {
      * Workflow read request
      */
     @Data
+    @Schema(description = "Workflow read request")
     public static class WorkflowReadRequest {
+        @Schema(description = "Workflow ID", example = "184736", requiredMode = Schema.RequiredMode.REQUIRED)
         private String flowId;
+        @Schema(description = "Application ID", example = "app-001")
         private String appId;
     }
 }
